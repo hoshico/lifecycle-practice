@@ -1,31 +1,34 @@
-import React from 'react'
-import logo from './logo.svg'
+import React, { useState } from 'react'
 import './App.css'
 import axios from 'axios'
+import { Todo } from './Todo'
+import { userInfo } from 'os'
 
-const App = () => {
-  const onClickUsers = () => {
+// typeは基本大文字スタート
+type TodoType = {
+  userId: number;
+  id: number;
+  title: string;
+  completed: boolean;
+}
+
+export default function App() {
+  const [todos, setTodos] = useState<Array<TodoType>>([])
+  const onClickFetchData = () => {
     axios
-      .get('https://jsonplaceholder.typicode.com/users')
+      .get<Array<TodoType>>('https://jsonplaceholder.typicode.com/todos')
       .then((res) => {
-        console.log(res.data)
+        setTodos(res.data)
       })
       .catch((err) => console.log(err))
   }
-  const onClickUser1 = () => {
-    axios
-      .get('https://jsonplaceholder.typicode.com/users/1')
-      .then((res) => {
-        console.log(res.data)
-      })
-      .catch((err) => console.log(err))
-  }
+
   return (
     <div className="App">
-      <button onClick={onClickUsers}>user</button>
-      <button onClick={onClickUser1}>id=1のuser</button>
+      <button onClick={onClickFetchData}>データ取得</button>
+      {todos.map((todo) => (
+        <Todo key={todo.id} title={todo.title} userId={todo.userId} completed={todo.completed}/>
+      ))}
     </div>
   )
 }
-
-export default App
