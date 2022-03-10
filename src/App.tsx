@@ -3,40 +3,32 @@ import './App.css'
 import axios from 'axios'
 import { Todo } from './Todo'
 import { UserCard } from './components/UserCard'
+import { User } from './types/api/user'
+import { UserProfile } from './types/userprofile'
 
-const user = {
-  id: 1,
-  name: "やす",
-  email: "1234@aaa.com",
-  address: "ADDRESS"
-}
-
-
-// typeは基本大文字スタート
-type TodoType = {
-  userId: number;
-  id: number;
-  title: string;
-  completed: boolean;
-}
 
 export default function App() {
-  const [todos, setTodos] = useState<Array<TodoType>>([])
-  const onClickFetchData = () => {
+  const [ userProfiles, setUserProfiles ] = useState<Array<UserProfile>>([]);
+  const [ loading, setLoading ] = useState<boolean>(false);
+  const onClickFetchUser = () => {
     axios
-      .get<Array<TodoType>>('https://jsonplaceholder.typicode.com/todos')
+      .get<Array<User>>('https://jsonplaceholder.typicode.com/users')
       .then((res) => {
-        setTodos(res.data)
-      })
-      .catch((err) => console.log(err))
-  }
+        const data = res.data.map((user) => ({
+          id: user.id,
+          name: `${user.name}(${user.username})`,
+          email: user.email,
+          address: `${user.address.city}${user.address.suite}${user.address.street}`,
+        }))
+        setUserProfiles(data);
+      });
+  };
 
   return (
     <div className="App">
-      <UserCard user={user}/>
-      <button onClick={onClickFetchData}>データ取得</button>
-      {todos.map((todo) => (
-        <Todo key={todo.id} title={todo.title} userId={todo.userId} completed={todo.completed}/>
+      <button onClick={onClickFetchUser}>データ取得</button>
+      {userProfiles.map((user) => (
+        <UserCard key={user.id} user={user} />
       ))}
     </div>
   )
