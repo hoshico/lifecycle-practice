@@ -2,7 +2,15 @@ import React, { useState } from 'react'
 import './App.css'
 import axios from 'axios'
 import { Todo } from './Todo'
-import { userInfo } from 'os'
+import { UserCard } from './components/UserCard'
+
+const user = {
+  id: 1,
+  name: "やす",
+  email: "1234@aaa.com",
+  address: "ADDRESS"
+}
+
 
 // typeは基本大文字スタート
 type TodoType = {
@@ -25,6 +33,7 @@ export default function App() {
 
   return (
     <div className="App">
+      <UserCard user={user}/>
       <button onClick={onClickFetchData}>データ取得</button>
       {todos.map((todo) => (
         <Todo key={todo.id} title={todo.title} userId={todo.userId} completed={todo.completed}/>
