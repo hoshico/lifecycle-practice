@@ -1,42 +1,13 @@
 import React, { useState } from 'react'
 import './App.css'
-import axios from 'axios'
-import { Todo } from './Todo'
+import { useAllUsers } from './components/hooks/useAllUsers'
 import { UserCard } from './components/UserCard'
-import { User } from './types/api/user'
-import { UserProfile } from './types/userprofile'
+
 
 export default function App() {
-  const [userProfiles, setUserProfiles] = useState<Array<UserProfile>>([])
-  const [loading, setLoading] = useState<boolean>(false)
-  // errorがあるのかどうかの判定
-  const [error, setError] = useState<boolean>(false)
+  const { getUsers, userProfiles, loading, error } = useAllUsers();
 
-  const onClickFetchUser = () => {
-    // onClickしたタイミングでloadingはtrueに
-    setLoading(true)
-    // 関数実行時は判定でerrorは無しにする
-    setError(false)
-    axios
-      .get<Array<User>>('https://jsonplaceholder.typicode.com/users')
-      .then((res) => {
-        const data = res.data.map((user) => ({
-          id: user.id,
-          name: `${user.name}(${user.username})`,
-          email: user.email,
-          address: `${user.address.city}${user.address.suite}${user.address.street}`
-        }))
-        setUserProfiles(data)
-      })
-      .catch(() => {
-        // errorがあった場合にtrueにする
-        setError(true);
-      })
-      .finally(() => {
-        // 正常でもerrorでもloadingは終了
-        setLoading(false)
-      })
-  }
+  const onClickFetchUser = () => getUsers()
 
   return (
     <div className="App">
